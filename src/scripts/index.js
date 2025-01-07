@@ -1,5 +1,7 @@
 import { getUser } from "./services/user.js";
 import { getRepositories } from "./services/repositories.js";
+import { events } from "./services/events.js";
+
 import { user } from "./objects/user.js";
 import { screen } from "./objects/screen.js";
 document.getElementById('btn-search').addEventListener('click', ()=>{
@@ -30,15 +32,17 @@ function validateEmptyInput(userName) {
 async function getUserData(userName){
     
     const userResponse = await getUser(userName)
-    const respositoriesResponse = await getRepositories(userName)
+    
     if(userResponse.message === 'Not Found') {
         screen.renderNotFound();
         return;
     }
-    console.log(userResponse);
-    
+    const repositoriesReponse = await getRepositories(userName)
+    const eventsResponse = await events(userName)
+
     user.setInfo(userResponse);
-    user.setRepositories(respositoriesResponse)
+    user.setRepositories(repositoriesReponse);
+    user.setEvents(eventsResponse);
     
     screen.renderUser(user)
 
